@@ -34,8 +34,6 @@ check_interface() {
     fi
 }
 
-# Check for root privileges
-check_root
 
 # Check if netplan is installed
 check_netplan
