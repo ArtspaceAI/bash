@@ -41,6 +41,7 @@ check_interface() {
 }
 
 # Prompt for the last octet of the IP address
+echo "Prompting for the last octet of the IP address..."
 read -p "Enter the last octet for the static IP (e.g., 100 for 192.168.1.100): " LAST_OCTET
 
 # Validate last octet input
@@ -101,5 +102,3 @@ echo "Verifying the new IP configuration..."
 ip addr show $INTERFACE
 
 echo "Static IP setup complete. Your new IP is $STATIC_IP."
-
-
