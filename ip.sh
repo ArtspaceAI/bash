@@ -59,7 +59,7 @@ ip addr show $INTERFACE
 
 # Step 2: Edit the network configuration file
 echo "Updating network configuration to set static IP..."
-sudo tee $NETPLAN_CONFIG > /dev/null <<EOL
+cat <<EOL > $NETPLAN_CONFIG
 network:
   version: 2
   ethernets:
@@ -83,7 +83,7 @@ fi
 
 # Step 4: Apply the configuration
 echo "Applying network configuration..."
-sudo netplan apply
+netplan apply
 
 # Step 5: Verify the static IP address
 echo "Verifying the new IP configuration..."
