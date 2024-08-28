@@ -5,6 +5,7 @@ GATEWAY="192.168.1.1"
 DNS1="8.8.8.8"
 DNS2="8.8.4.4"
 NETPLAN_CONFIG="/etc/netplan/01-netcfg.yaml"
+STATIC_IP="192.168.1.201/24"
 
 # Function to check for root privileges
 check_root() {
@@ -39,19 +40,6 @@ check_interface() {
         exit 1
     fi
 }
-
-# Prompt for the last octet of the IP address
-echo "Prompting for the last octet of the IP address..."
-read -p "Enter the last octet for the static IP (e.g., 100 for 192.168.1.100): " LAST_OCTET
-
-# Validate last octet input
-if ! [[ "$LAST_OCTET" =~ ^[0-9]+$ ]] || [ "$LAST_OCTET" -lt 1 ] || [ "$LAST_OCTET" -gt 254 ]; then
-    echo "Invalid last octet. Please enter a number between 1 and 254."
-    exit 1
-fi
-
-# Construct the full static IP address
-STATIC_IP="192.168.1.$LAST_OCTET/24"
 
 # Check for root privileges
 check_root
