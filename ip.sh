@@ -17,17 +17,9 @@ else
   exit 1
 fi
 
-# Prompt user to confirm changes
-echo "Do you want to apply this configuration? (y/n): "
-read -r RESPONSE
-
-if [ "$RESPONSE" = "y" ]; then
-  # Apply network configuration
-  ip addr flush dev "$INTERFACE"
-  ip addr add "$IP_ADDRESS" dev "$INTERFACE"
-  ip link set dev "$INTERFACE" up
-  ip route add default via "$GATEWAY"
-  echo "Static IP setup complete. Your new IP is $IP_ADDRESS."
-else
-  echo "Configuration changes aborted."
-fi
+# Apply network configuration
+ip addr flush dev "$INTERFACE"
+ip addr add "$IP_ADDRESS" dev "$INTERFACE"
+ip link set dev "$INTERFACE" up
+ip route add default via "$GATEWAY"
+echo "Static IP setup complete. Your new IP is $IP_ADDRESS."
