@@ -1,91 +1,33 @@
 #!/bin/bash
 
-# Variables (Modify these according to your network configuration)
-GATEWAY="192.168.1.1"
-DNS1="8.8.8.8"
-DNS2="8.8.4.4"
-NETPLAN_CONFIG="/etc/netplan/01-netcfg.yaml"
-STATIC_IP="192.168.1.201/24"
+# Auto-detect primary network interface
+INTERFACE=$(ip route show default | awk '{print $5}')
 
-# Function to check if netplan is installed
-check_netplan() {
-    if ! command -v netplan &> /dev/null; then
-        echo "Netplan is not installed. Please install netplan.io."
-        exit 1
-    fi
-}
+# Auto-detect operating system
+OS=$(uname -s)
 
-# Function to detect the primary network interface
-detect_interface() {
-    INTERFACE=$(ip -o -4 route show to default | awk '{print $5}')
-    if [ -z "$INTERFACE" ]; then
-        echo "No default network interface found."
-        exit 1
-    fi
-    echo "Detected network interface: $INTERFACE"
-}
+# Set IP configuration based on OS
+if [ "$OS" = "Linux" ]; then
+  # Ubuntu-specific configuration
+  IP_ADDRESS="192.168.1.201/24"
+  GATEWAY="192.168.1.1"
+  DNS_SERVERS="8.8.8.8 4.4.4.4"
+else
+  echo "Unsupported operating system: $OS"
+  exit 1
+fi
 
-# Function to check if the interface exists
-check_interface() {
-    if ! ip link show $INTERFACE &> /dev/null; then
-        echo "Network interface $INTERFACE not found."
-        exit 1
-    fi
-}
+# Prompt user to confirm changes
+echo "Do you want to apply this configuration? (y/n): "
+read -r RESPONSE
 
-# Check if netplan is installed
-check_netplan
-
-# Detect the network interface
-detect_interface
-
-# Check if the network interface exists
-check_interface
-
-# Step 1: Find the current IP configuration (optional - just for logging)
-echo "Current IP Configuration:"
-ip addr show $INTERFACE
-
-# Step 2: Edit the network configuration file
-echo "Updating network configuration to set static IP..."
-cat <<EOL > $NETPLAN_CONFIG
-network:
-  version: 2
-  interfaces:
-    $INTERFACE:
-      dhcp4: no
-      addresses:
-        - $STATIC_IP
-      gateway4: $GATEWAY
-      nameservers:
-        addresses:
-          - $DNS1
-          - $DNS2
-EOL
-
-# Step 3: Prompt for confirmation
-while true; do
-    read -p "Do you want to apply this configuration? (y/n): " CONFIRMATION
-    case $CONFIRMATION in
-        [yY])
-            break
-            ;;
-        [nN])
-            echo "Configuration changes aborted."
-            exit 0
-            ;;
-        *)
-            echo "Invalid input. Please enter y or n."
-            ;;
-    esac
-done
-
-# Step 4: Apply the configuration
-echo "Applying network configuration..."
-netplan apply
-
-# Step 5: Verify the static IP address
-echo "Verifying the new IP configuration..."
-ip addr show $INTERFACE
-
-echo "Static IP setup complete. Your new IP is $STATIC_IP."
+if [ "$RESPONSE" = "y" ]; then
+  # Apply network configuration
+  ip addr flush dev "$INTERFACE"
+  ip addr add "$IP_ADDRESS" dev "$INTERFACE"
+  ip link set dev "$INTERFACE" up
+  ip route add default via "$GATEWAY"
+  echo "Static IP setup complete. Your new IP is $IP_ADDRESS."
+else
+  echo "Configuration changes aborted."
+fi
