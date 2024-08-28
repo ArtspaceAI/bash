@@ -7,7 +7,6 @@ DNS2="8.8.4.4"
 NETPLAN_CONFIG="/etc/netplan/01-netcfg.yaml"
 STATIC_IP="192.168.1.201/24"
 
-
 # Function to check if netplan is installed
 check_netplan() {
     if ! command -v netplan &> /dev/null; then
@@ -34,7 +33,6 @@ check_interface() {
     fi
 }
 
-
 # Check if netplan is installed
 check_netplan
 
@@ -53,7 +51,7 @@ echo "Updating network configuration to set static IP..."
 cat <<EOL > $NETPLAN_CONFIG
 network:
   version: 2
-  ethernets:
+  interfaces:
     $INTERFACE:
       dhcp4: no
       addresses:
@@ -66,11 +64,21 @@ network:
 EOL
 
 # Step 3: Prompt for confirmation
-read -p "Do you want to apply this configuration? (y/n): " CONFIRMATION
-if [ "$CONFIRMATION" != "y" ]; then
-    echo "Configuration changes aborted."
-    exit 0
-fi
+while true; do
+    read -p "Do you want to apply this configuration? (y/n): " CONFIRMATION
+    case $CONFIRMATION in
+        [yY])
+            break
+            ;;
+        [nN])
+            echo "Configuration changes aborted."
+            exit 0
+            ;;
+        *)
+            echo "Invalid input. Please enter y or n."
+            ;;
+    esac
+done
 
 # Step 4: Apply the configuration
 echo "Applying network configuration..."
