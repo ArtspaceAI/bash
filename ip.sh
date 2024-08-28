@@ -101,3 +101,5 @@ echo "Verifying the new IP configuration..."
 ip addr show $INTERFACE
 
 echo "Static IP setup complete. Your new IP is $STATIC_IP."
+
+
