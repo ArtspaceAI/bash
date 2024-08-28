@@ -7,13 +7,6 @@ DNS2="8.8.4.4"
 NETPLAN_CONFIG="/etc/netplan/01-netcfg.yaml"
 STATIC_IP="192.168.1.201/24"
 
-# Function to check for root privileges
-check_root() {
-    if [ "$EUID" -ne 0 ]; then
-        echo "Please run as root or with sudo."
-        exit 1
-    fi
-}
 
 # Function to check if netplan is installed
 check_netplan() {
