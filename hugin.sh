@@ -1,5 +1,5 @@
 #!/bin/bash
-
+ 
 # Update and upgrade the system
 apt update && apt upgrade -y
 
