@@ -2,13 +2,11 @@
 
 # Update and upgrade the system
 apt update && apt upgrade -y
-#!/bin/bash
-
-# Update and upgrade the system
-sudo apt update && sudo apt upgrade -y
 
 # Install necessary packages
-sudo apt install -y software-properties-common apt-transport-https ca-certificates curl gnupg lsb-release
+apt install -y sudo curl bash software-properties-common apt-transport-https ca-certificates gnupg lsb-release
+
+sudo su -
 
 # Add Docker’s official GPG key
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
@@ -30,6 +28,17 @@ sudo systemctl enable docker
 
 # Verify Docker installation
 sudo docker run hello-world
+
+# Add a new user and group
+sudo groupadd huginn
+sudo useradd -m -g huginn -s /bin/bash huginn
+echo "huginn:password" | sudo chpasswd
+
+# Add the new user to the Docker group
+sudo usermod -aG docker huginn
+
+# Switch to the new user
+sudo su - huginn
 
 # Install necessary packages
 sudo apt install -y sudo software-properties-common bash nano curl wget git
