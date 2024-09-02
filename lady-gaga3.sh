@@ -38,6 +38,9 @@ echo -e "${GREEN}Starting a new screen session for status check...${NC}"
 # Start a new screen session for status check
 screen -S status-check -d -m bash -c '../apphub-linux-amd64/apphub status; exec bash'
 
+echo -e "${GREEN}back to Apphub Folder cd ../apphub-linux-amd64/ ...${NC}" 
+cd ../apphub-linux-amd64/ 
+
 echo -e "${GREEN}Configuring gaganode...${NC}"
 # Configure gaganode
 sudo ./apps/gaganode/gaganode config set --token=zzpozuelztsyrtbc3ce802710170d4d3
